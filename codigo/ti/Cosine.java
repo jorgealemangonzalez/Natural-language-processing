@@ -20,10 +20,12 @@ public class Cosine implements RetrievalModel
 	{
 		// P1
 		// extraer términos de la consulta
+                ArrayList<String> queryTokens = docProcessor.processText(queryText);
 		// calcular el vector consulta
+                ArrayList<Tuple<Integer, Double>> queryVector = computeVector(queryTokens, index);
 		// calcular similitud de documentos
-
-		return null; // devolver resultados
+                ArrayList<Tuple<Integer, Double>> res = computeScores(queryVector, index);
+		return res; // devolver resultados
 	}
 
 	/**
@@ -38,7 +40,6 @@ public class Cosine implements RetrievalModel
 		ArrayList<Tuple<Integer, Double>> results = new ArrayList<>();
 
 		// P1
-
 		// Ordenar documentos por similitud y devolver
 		Collections.sort(results, new Comparator<Tuple<Integer, Double>>()
 		{
@@ -61,7 +62,12 @@ public class Cosine implements RetrievalModel
 	protected ArrayList<Tuple<Integer, Double>> computeVector(ArrayList<String> terms, Index index)
 	{
 		ArrayList<Tuple<Integer, Double>> vector = new ArrayList<>();
-
+                //ftd : apariciones palabra en documento
+                //nd : numero de documentos totales
+                //ct : numero documentos donde aparece la palabra
+                //tftd : indicador frecuancia aparicion del termino , suavizando en el numero de apariciones
+                //idft : indicador que penaliza la aparicion de una palabra en una gran cantidad de documentos
+                //wtd : peso de una palabra en la query
 		// P1
 
 		return vector;
