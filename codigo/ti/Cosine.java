@@ -1,6 +1,7 @@
 package ti;
 
 import java.util.*;
+import java.lang.Math;
 
 /**
  * Implements retrieval in a vector space with the cosine similarity function and a TFxIDF weight formulation.
@@ -43,18 +44,18 @@ public class Cosine implements RetrievalModel
 		HashMap<Integer,Double> res  = new HashMap<Integer,Double>();
 		double normWtq = 0.0;
 		for(Tuple<Integer,Double> qw : queryVector){
-			normWtq += sqrt(qw.term2 * qw.term2);
+			normWtq += Math.sqrt(qw.item2 * qw.item2);
 		}
 		for(Tuple<Integer,Double> qw : queryVector){//for each query word
-			for(ArrayList<Tuple<Integer, Double>> docsW : index.invertedIndex.get(qw.term1) {
-				if(res.get(docsW.term1) == null){
-					res.put(docsW.term1,0.0);
+			for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
+				if(res.get(docsW.item1) == null){
+					res.put(docsW.item1,0.0);
 				}
-				res.put(docsW.term1,  res.get(docsW.term1).term2 += ((docsW.term2) * (qw.term2))/((index.documents.get(docsW.term1).term2 )*( normWtq )) );
+				res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2 )*( normWtq )) );
 			}
 		}
 		for(Map.Entry<Integer,Double> e : res.entrySet() ){
-			results.put(new Tuple<Integer, Double>(e.getKey(),e.getValue());
+			results.add(new Tuple<Integer, Double>(e.getKey(),e.getValue()));
 		}
 		
 		// Ordenar documentos por similitud y devolver
@@ -102,8 +103,8 @@ public class Cosine implements RetrievalModel
 				}
 			}
 			if(isRepited)continue;			//Si ya habiamos guardado la informacion de este termino no lo guardamos en el vector de resultados
-			Double tftq = 1 + log(ftq);
-			vector.put(new Tuple<Integer, Double>(id_term,idft*tftq));
+			Double tftq = 1 + Math.log(ftq);
+			vector.add(new Tuple<Integer, Double>(id_term,idft*tftq));
 		}
 		return vector;
 	}
