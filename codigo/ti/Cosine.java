@@ -40,6 +40,23 @@ public class Cosine implements RetrievalModel
 		ArrayList<Tuple<Integer, Double>> results = new ArrayList<>();
 
 		// P1
+		HashMap<Integer,Double> res  = new HashMap<Integer,Double>();
+		double normWtq = 0.0;
+		for(Tuple<Integer,Double> qw : queryVector){
+			normWtq += sqrt(qw.term2 * qw.term2);
+		}
+		for(Tuple<Integer,Double> qw : queryVector){//for each query word
+			for(ArrayList<Tuple<Integer, Double>> docsW : index.invertedIndex.get(qw.term1) {
+				if(res.get(docsW.term1) == null){
+					res.put(docsW.term1,0.0);
+				}
+				res.put(docsW.term1,  res.get(docsW.term1).term2 += ((docsW.term2) * (qw.term2))/((index.documents.get(docsW.term1).term2 )*( normWtq )) );
+			}
+		}
+		for(Map.Entry<Integer,Double> e : res.entrySet() ){
+			results.put(new Tuple<Integer, Double>(e.getKey(),e.getValue());
+		}
+		
 		// Ordenar documentos por similitud y devolver
 		Collections.sort(results, new Comparator<Tuple<Integer, Double>>()
 		{
@@ -62,14 +79,32 @@ public class Cosine implements RetrievalModel
 	protected ArrayList<Tuple<Integer, Double>> computeVector(ArrayList<String> terms, Index index)
 	{
 		ArrayList<Tuple<Integer, Double>> vector = new ArrayList<>();
-                //ftd : apariciones palabra en documento
+                //ftq : apariciones palabra en query
                 //nd : numero de documentos totales
                 //ct : numero documentos donde aparece la palabra
-                //tftd : indicador frecuancia aparicion del termino , suavizando en el numero de apariciones
+                //tftq : indicador frecuancia aparicion del termino , suavizando en el numero de apariciones
                 //idft : indicador que penaliza la aparicion de una palabra en una gran cantidad de documentos
-                //wtd : peso de una palabra en la query
+                //wtq : peso de una palabra en la query
 		// P1
-
+		for(int i = 0 ; i < terms.size() ; ++i){
+			Tuple<Integer, Double> termInfo = index.vocabulary.get(terms.get(i));
+			Double idft = termInfo.item2;
+			int id_term = termInfo.item1;
+			int ftq = 0;
+			boolean isRepited = false;					
+			for(int j = 0 ; j < terms.size() ; ++j){
+				if(terms.get(i) == terms.get(j)){
+					ftq++;
+					if(j > i){
+						isRepited = true;
+						break;
+					}
+				}
+			}
+			if(isRepited)continue;			//Si ya habiamos guardado la informacion de este termino no lo guardamos en el vector de resultados
+			Double tftq = 1 + log(ftq);
+			vector.put(new Tuple<Integer, Double>(id_term,idft*tftq));
+		}
 		return vector;
 	}
 }
