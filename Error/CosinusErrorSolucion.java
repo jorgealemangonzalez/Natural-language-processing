@@ -87,6 +87,45 @@ public class Cosine implements RetrievalModel
                 //idft : indicador que penaliza la aparicion de una palabra en una gran cantidad de documentos
                 //wtq : peso de una palabra en la query
 		// P1
+                terms.clear();
+                terms.add("Prueba");
+                terms.add("Prueba");
+                terms.add("Prueba");
+                terms.add("Prueba");
+                terms.add("Prueba2");
+		for(int i = 0 ; i < terms.size() ; ++i){
+			//Tuple<Integer, Double> termInfo = index.vocabulary.get(terms.get(i));
+			//Double idft = termInfo.item2;
+			//int id_term = termInfo.item1;
+			int ftq = 0;
+			boolean isRepited = false;					
+			for(int j = 0 ; j < terms.size() ; ++j){
+				if(terms.get(i) == terms.get(j)){
+					ftq++;
+					if(j < i){ // Antes era j > i
+						isRepited = true;
+						break;
+					}
+				}
+			}
+			if(isRepited)continue;			//Si ya habiamos guardado la informacion de este termino no lo guardamos en el vector de resultados
+			Double tftq = 1 + Math.log(ftq);
+			//vector.add(new Tuple<Integer, Double>(id_term,idft*tftq));
+		}
+		return vector;
+	}
+}
+
+/*	protected ArrayList<Tuple<Integer, Double>> computeVector(ArrayList<String> terms, Index index)
+	{
+		ArrayList<Tuple<Integer, Double>> vector = new ArrayList<>();
+                //ftq : apariciones palabra en query
+                //nd : numero de documentos totales
+                //ct : numero documentos donde aparece la palabra
+                //tftq : indicador frecuancia aparicion del termino , suavizando en el numero de apariciones
+                //idft : indicador que penaliza la aparicion de una palabra en una gran cantidad de documentos
+                //wtq : peso de una palabra en la query
+		// P1
 		for(int i = 0 ; i < terms.size() ; ++i){
 			Tuple<Integer, Double> termInfo = index.vocabulary.get(terms.get(i));
 			Double idft = termInfo.item2;
@@ -96,7 +135,7 @@ public class Cosine implements RetrievalModel
 			for(int j = 0 ; j < terms.size() ; ++j){
 				if(terms.get(i) == terms.get(j)){
 					ftq++;
-					if(j < i){
+					if(j > i){
 						isRepited = true;
 						break;
 					}
@@ -107,5 +146,4 @@ public class Cosine implements RetrievalModel
 			vector.add(new Tuple<Integer, Double>(id_term,idft*tftq));
 		}
 		return vector;
-	}
-}
+	}*/
