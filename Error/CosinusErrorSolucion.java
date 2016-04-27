@@ -44,11 +44,11 @@ public class Cosine implements RetrievalModel
 		HashMap<Integer,Double> res  = new HashMap<Integer,Double>();
 		double normWtq = 0.0;
 		for(Tuple<Integer,Double> qw : queryVector){
-			normWtq += Math.sqrt(qw.item2 * qw.item2);
+			normWtq += Math.sqrt(qw.item2 * qw.item2); // Si no me equivoco esto no es correcto, la suma de raizes no es lo mismo que la raiz de una suma. 2² + 2² = 8, (2+2)² = 16
 		}
 		for(Tuple<Integer,Double> qw : queryVector){//for each query word
 			for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
-				if(res.get(docsW.item1) == null){
+				if(res.get(docsW.item1) == null){ // Sería mejor cambiarlo por containsKey que hace lo mismo y retorna un booleano.
 					res.put(docsW.item1,0.0);
 				}
 				res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2 )*( normWtq )) );
@@ -69,6 +69,8 @@ public class Cosine implements RetrievalModel
 		});
 		return results;
 	}
+
+
 
 	/**
 	 * Compute the vector of weights for the specified list of terms.

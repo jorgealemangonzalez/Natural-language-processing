@@ -44,14 +44,15 @@ public class Cosine implements RetrievalModel
 		HashMap<Integer,Double> res  = new HashMap<Integer,Double>();
 		double normWtq = 0.0;
 		for(Tuple<Integer,Double> qw : queryVector){
-			normWtq += Math.sqrt(qw.item2 * qw.item2);
+			normWtq += qw.item2 * qw.item2;
 		}
+                normWtq = Math.sqrt(normWtq);
+                
 		for(Tuple<Integer,Double> qw : queryVector){//for each query word
 			for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
-				if(res.get(docsW.item1) == null){
-					res.put(docsW.item1,0.0);
-				}
-				res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2 )*( normWtq )) );
+				if(res.containsKey(docsW.item1) == false)
+                                    res.put(docsW.item1,0.0);
+                                res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2 )*( normWtq )) );
 			}
 		}
 		for(Map.Entry<Integer,Double> e : res.entrySet() ){
