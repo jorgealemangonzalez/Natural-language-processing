@@ -46,13 +46,7 @@ public class Cosine implements RetrievalModel
 			normWtq += qw.item2 * qw.item2;
                 normWtq = Math.sqrt(normWtq);
                 
-		for(Tuple<Integer,Double> qw : queryVector){//for each query word
-			for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
-				if(res.containsKey(docsW.item1) == false)
-                                    res.put(docsW.item1, 0.0);
-                               res.replace(docsW.item1,  res.get(docsW.item1) + (((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2)*(normWtq))));
-                        }
-		}
+                JaccardScore(queryVector, index, normWtq, res);
                 
 		for(Map.Entry<Integer,Double> e : res.entrySet() ){
 			results.add(new Tuple<Integer, Double>(e.getKey(),e.getValue()));
@@ -70,24 +64,48 @@ public class Cosine implements RetrievalModel
 		return results;
 	}
         
+        
+        // Método que hace uso del cálculo de la similitud por defecto.
+        void similitudNormal(ArrayList<Tuple<Integer, Double>> queryVector, Index index, double normWtq, HashMap<Integer,Double> res){
+            for(Tuple<Integer,Double> qw : queryVector){//for each query word
+                for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
+                    if(res.containsKey(docsW.item1) == false)
+                        res.put(docsW.item1, 0.0);
+                    res.replace(docsW.item1,  res.get(docsW.item1) + (((docsW.item2) * (qw.item2))/((index.documents.get(docsW.item1).item2)*(normWtq))));  
+                }
+            }          
+        }
+        
         // Método Dice
         // En teoría o en el enlace inferior.
         // https://en.wikipedia.org/wiki/S%C3%B8rensen%E2%80%93Dice_coefficient Mitad de la página. (Valor absoluto no es necesario en nuestro caso)
-        void DiceScore(HashMap<Integer,Double> res, Tuple<Integer,Double> qw, Tuple<Integer, Double> docsW, Index index, double normWtq){
-            res.replace(docsW.item1,  res.get(docsW.item1) + (2 * (docsW.item2) * (qw.item2))
-                    /((index.documents.get(docsW.item1).item2 )*( normWtq )) );
+        void DiceScore(ArrayList<Tuple<Integer, Double>> queryVector, Index index, double normWtq, HashMap<Integer,Double> res){
+            for(Tuple<Integer,Double> qw : queryVector){//for each query word
+                for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
+                    if(res.containsKey(docsW.item1) == false)
+                        res.put(docsW.item1, 0.0);
+                    res.replace(docsW.item1,  res.get(docsW.item1) + (2 * (docsW.item2) * (qw.item2))
+                    /(Math.pow(index.documents.get(docsW.item1).item2, 2) + Math.pow(normWtq, 2)));
+                }
+            }  
         }
         
         // Método de Jaccard
         // En teoría o en enlace inferior.
         // https://en.wikipedia.org/wiki/Jaccard_index  Al final de la página.
-        void JaccardScore(HashMap<Integer,Double> res, Tuple<Integer,Double> qw, Tuple<Integer, Double> docsW, Index index, double normWtq){
-            res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2))
-                    /((index.documents.get(docsW.item1).item2 )*( normWtq )) - (docsW.item2) * (qw.item2) );
+        void JaccardScore(ArrayList<Tuple<Integer, Double>> queryVector, Index index, double normWtq, HashMap<Integer,Double> res){
+            for(Tuple<Integer,Double> qw : queryVector){//for each query word
+                for(Tuple<Integer, Double> docsW : index.invertedIndex.get(qw.item1)) {
+                    if(res.containsKey(docsW.item1) == false)
+                        res.put(docsW.item1, 0.0);
+                    res.replace(docsW.item1,  res.get(docsW.item1) + ((docsW.item2) * (qw.item2)));
+                }
+            }
+            for(Integer key : res.keySet())
+                res.replace(key, (res.get(key))/(Math.pow(index.documents.get(key).item2, 2) + Math.pow(normWtq, 2) - res.get(key)));
         }
         
         
-
 	/**
 	 * Compute the vector of weights for the specified list of terms.
 	 *
@@ -184,7 +202,7 @@ public class Cosine implements RetrievalModel
         }
         
         
-        // Los valores de este vector son : Integer: TermId. Tupla: -Double: Peso termino query String: Termino
+        // Los valores de este vector son: -Integer: TermId. -Tupla: -Double: Peso termino query. -String: Término.
         protected  ArrayList<Tuple<Integer, Tuple<Double, String>>> computeVectorOkami(ArrayList<String> terms, Index index){
             ArrayList<Tuple<Integer, Tuple<Double, String>>> vector = new ArrayList<>();
             
@@ -194,7 +212,7 @@ public class Cosine implements RetrievalModel
                 int ftq = 0;    boolean isRepited = false;					
                 
                 for(int j = 0 ; j < terms.size() ; ++j){
-                    if(terms.get(i) == terms.get(j)){
+                    if(terms.get(i).compareTo(terms.get(j)) == 0){
                         ftq++;
                         if(j < i){
                             isRepited = true;
