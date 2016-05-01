@@ -1,0 +1,4 @@
+Los métodos implementados no consiguen mejorar los resultados del método principal al analizarlos sobre el corpus de documento. Si probamos sobre el corpus de ejemplo estos parecen ser incluso algo más efectivos ( en el caso de Dice y Jaccard ) que el método del coseno.
+
+En el caso de la función Okami deberíamos de mirar que valores de k y b dan unos mejores resultados. Con k = 2 y 0.75 estos resultan inferiores a los del coseno.
+
