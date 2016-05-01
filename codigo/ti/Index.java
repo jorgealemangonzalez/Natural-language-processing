@@ -38,6 +38,7 @@ public class Index
      * The {@link Tuple} contains the {@code name} of the document and its vector {@code norm}.
      */
     public ArrayList<Tuple<String, Double>> documents; // [docID] -> (docName, norm)
+    public  HashMap<Integer, Integer> documentsOkapi; // [docID] -> (length)
     /**
      * The inverted index.
      * <p>
@@ -66,6 +67,7 @@ public class Index
         this.path = path;
         this.vocabulary = new HashMap<>();
         this.documents = new ArrayList<>();
+        this.documentsOkapi = new HashMap<>();
         this.invertedIndex = new ArrayList<>();
         this.directIndex = new ArrayList<>();
     }
@@ -150,6 +152,20 @@ public class Index
             }
             this.invertedIndex.add(i, entry);
         }
+        
+        
+        for (Tuple<Integer, Double> word : vocabulary.values()) { // Termino
+            
+            for(int j = 0; j < invertedIndex.get(word.item1).size(); j++){ // Doc Id
+                if(documentsOkapi.containsKey(invertedIndex.get(word.item1).get(j).item1) == false)
+                    documentsOkapi.put(invertedIndex.get(word.item1).get(j).item1, 0);
+                double length = invertedIndex.get(word.item1).get(j).item2/word.item2; // weigth / idf = tft
+                //length = Math.exp(length - 1); // Calculamos td
+                documentsOkapi.replace(invertedIndex.get(word.item1).get(j).item1, 
+                        documentsOkapi.get(invertedIndex.get(word.item1).get(j).item1) + (int)length);
+            }
+        }
+        
         ois.close();
         // Direct
         ois = new ObjectInputStream(new FileInputStream(Paths.get(this.path, "direct").toFile()));
