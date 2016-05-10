@@ -8,7 +8,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
-
+import java.util.Scanner;
+import java.io.FileInputStream;
 /**
  * This class contains the logic to run the indexing process of the search engine.
  */
@@ -138,8 +139,22 @@ public class Indexer
     {
 		// P2
         // leer documento desde disco
-		// procesarlo para obtener los términos
-		// calcular pesos
-		// actualizar estructuras del índice: vocabulary, documents e invertedIndex
+        SimpleProcessor pros = new SimpleProcessor();
+        String file = new String();
+        Scanner sc = new Scanner(new FileInputStream(docFile));
+        while(sc.hasNext()){
+            file += sc.next() + " ";
+        }
+        // procesarlo para obtener los términos
+         ArrayList<String> words = pros.processText(file);
+        // calcular pesos
+
+        // actualizar estructuras del índice: vocabulary, documents e invertedIndex
     }
 }
+
+/*
+   public HashMap<String, Tuple<Integer, Double>> vocabulary; // [term] -> (termID, IDF)
+    public ArrayList<Tuple<String, Double>> documents; // [docID] -> (docName, norm)
+    public ArrayList<ArrayList<Tuple<Integer, Double>>> invertedIndex; // [termID] -> (docID, weight)+
+*/
