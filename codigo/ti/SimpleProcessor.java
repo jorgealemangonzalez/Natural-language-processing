@@ -30,7 +30,7 @@ public class SimpleProcessor implements DocumentProcessor
 
         ArrayList<String> terms = new ArrayList<>();
         for (String token : tokens)
-            if (token.length() > 4)
+           if (token.length() > 4)
                 terms.add(token);
 
         return terms;

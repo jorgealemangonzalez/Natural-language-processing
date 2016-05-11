@@ -38,7 +38,7 @@ public class Index
      * The {@link Tuple} contains the {@code name} of the document and its vector {@code norm}.
      */
     public ArrayList<Tuple<String, Double>> documents; // [docID] -> (docName, norm)
-    public  HashMap<Integer, Integer> documentsOkapi; // [docID] -> (length)
+    public HashMap<Integer, Integer> documentsOkapi; // [docID] -> (length)
     /**
      * The inverted index.
      * <p>

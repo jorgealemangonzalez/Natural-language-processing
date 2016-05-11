@@ -1,5 +1,6 @@
 package ti;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,6 +11,15 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.*;
+import java.lang.Math;
+import static java.lang.Math.log;
+import static java.lang.Math.sqrt;
 /**
  * This class contains the logic to run the indexing process of the search engine.
  */
@@ -106,9 +116,20 @@ public class Indexer
         System.err.println("Running second pass...");
         System.err.print("  Updating term weights and direct index...");
 
-		// P2
-		// recorrer el índice para calcular IDF y actualizar pesos
-
+        // P2
+        // recorrer el índice para calcular IDF y actualizar pesos
+        int ct = ind.documents.size();
+        for(Map.Entry<String,Tuple<Integer,Double> > e : ind.vocabulary.entrySet() ){
+            Tuple<Integer,Double> termdoc = e.getValue();
+            int termid = termdoc.item1;
+            int nd = ind.invertedIndex.get(termid).size();
+            
+            termdoc.item2 = log(1+(nd/ct) );
+            for(Tuple<Integer,Double> t : ind.invertedIndex.get(termid) ){
+                t.item2 = termdoc.item2 * (1+ log(t.item2) );
+                ind.documents.get(t.item1).item2 += t.item2 * t.item2;
+            }
+        }                  
 		// P4
 		// actualizar directIndex
         // Traverse all terms to compute IDF, direct postings, and norm summations
@@ -117,9 +138,11 @@ public class Indexer
 
         System.err.print("  Updating document norms...");
         
-		// P2
-		// actualizar normas de documentos
-
+        // P2
+        // actualizar normas de documentos
+        for(Tuple<String,Double> t : ind.documents){
+            t.item2 = sqrt(t.item2);
+        }
         long endTime = System.currentTimeMillis();
         double totalTime = (endTime - startTime) / 1000d;
         System.err.println("done.");
@@ -137,24 +160,57 @@ public class Indexer
      */
     protected void processDocument(File docFile, Index ind) throws IOException
     {
-		// P2
+        // P2
+        //BufferedReader b = new BufferedReader(docFile.);
         // leer documento desde disco
-        SimpleProcessor pros = new SimpleProcessor();
+        
+        String pfile;
+        String file = new String();
+        BufferedReader br = null;
+        br = new BufferedReader(new FileReader(docFile.getAbsolutePath()));
+        while((pfile = br.readLine()) != null){
+            file += pfile + " ";
+        }
+        
+        
+        /*
         String file = new String();
         Scanner sc = new Scanner(new FileInputStream(docFile));
         while(sc.hasNext()){
             file += sc.next() + " ";
-        }
+        }*/
+        
         // procesarlo para obtener los términos
-         ArrayList<String> words = pros.processText(file);
         // calcular pesos
-
-        // actualizar estructuras del índice: vocabulary, documents e invertedIndex
+        // actualizar estructuras del índice: vocabularyf documents e invertedIndex
+    
+        int docId = ind.documents.size();
+        ind.documents.add(new Tuple(docFile.getName(), 0.0));
+        
+        List<String> tokens = Arrays.asList(file.toLowerCase().replaceAll("[^a-z0-9']", " ").split("\\s+"));
+        for (String token : tokens){
+           if (token.length() > 4){
+               Tuple<Integer,Double> term = ind.vocabulary.get(token);
+               if(term == null){
+                   int sz = ind.vocabulary.size();
+                   ind.invertedIndex.add(new ArrayList<>());
+                   term = new Tuple(sz, 0.0);
+                   ind.vocabulary.put(token, term);
+                   
+               }
+               ArrayList<Tuple<Integer,Double> > docs = ind.invertedIndex.get(term.item1);
+               int docsInTerm = docs.size();
+               if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId )
+                   docs.add(new Tuple<Integer,Double>(docId,0.0));
+               Tuple<Integer,Double> tuple = docs.get(docs.size()-1); // Guardamos el ftd para calcular posteriormente tf e IDF.
+               tuple.item2 += 1.0;
+           }
+        }
     }
 }
-
 /*
    public HashMap<String, Tuple<Integer, Double>> vocabulary; // [term] -> (termID, IDF)
     public ArrayList<Tuple<String, Double>> documents; // [docID] -> (docName, norm)
     public ArrayList<ArrayList<Tuple<Integer, Double>>> invertedIndex; // [termID] -> (docID, weight)+
 */
+  

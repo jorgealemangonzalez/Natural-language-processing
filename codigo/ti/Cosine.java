@@ -24,8 +24,6 @@ public class Cosine implements RetrievalModel
             // calcular similitud de documentos
             ArrayList<Tuple<Integer, Double>> res = computeScores(queryVector, index);
             
-            
-            
             /* // Método de Okami
             // extraer términos de la consulta
             ArrayList<String> queryTokens = docProcessor.processText(queryText);
@@ -122,6 +120,7 @@ public class Cosine implements RetrievalModel
 	protected ArrayList<Tuple<Integer, Double>> computeVector(ArrayList<String> terms, Index index)
 	{
             ArrayList<Tuple<Integer, Double>> vector = new ArrayList<>();
+            HashMap <String,Integer> ftqAll = new HashMap<>();
             //ftq : apariciones palabra en query
             //nd : numero de documentos totales
             //ct : numero documentos donde aparece la palabra
@@ -132,22 +131,18 @@ public class Cosine implements RetrievalModel
             Double idft, tftq;
             int id_term, ftq;
             for(int i = 0 ; i < terms.size() ; ++i){
-                Tuple<Integer, Double> termInfo = index.vocabulary.get(terms.get(i));
+                String term = terms.get(i);
+                if(ftqAll.containsKey(term) == false )
+                    ftqAll.put(term,1);
+                else
+                    ftqAll.replace(term, ftqAll.get(term)+1);
+            }
+            
+            for(Map.Entry<String,Integer> e : ftqAll.entrySet() ){
+                Tuple<Integer, Double> termInfo = index.vocabulary.get(e.getKey());
                 id_term = termInfo.item1; idft = termInfo.item2;
-                ftq = 0;    boolean isRepited = false;
+                tftq = 1 + Math.log(e.getValue());
                 
-                for(int j = 0 ; j < terms.size() ; ++j){
-                    if(terms.get(i).compareTo(terms.get(j)) == 0){
-                        ftq++;
-                        if(j < i){
-                            isRepited = true;
-                            break;
-                        }
-                    }
-                }
-                //Si ya habiamos guardado la informacion de este termino no lo guardamos en el vector de resultados
-                if(isRepited)continue;
-                tftq = 1 + Math.log(ftq);
                 vector.add(new Tuple<Integer, Double>(id_term,idft*tftq));
             }
             return vector;
