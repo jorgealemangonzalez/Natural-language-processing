@@ -140,6 +140,7 @@ public class Cosine implements RetrievalModel
             
             for(Map.Entry<String,Integer> e : ftqAll.entrySet() ){
                 Tuple<Integer, Double> termInfo = index.vocabulary.get(e.getKey());
+                if(termInfo == null)continue;
                 id_term = termInfo.item1; idft = termInfo.item2;
                 tftq = 1 + Math.log(e.getValue());
                 

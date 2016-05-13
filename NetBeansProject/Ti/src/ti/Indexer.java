@@ -118,7 +118,7 @@ public class Indexer
 
         // P2
         // recorrer el índice para calcular IDF y actualizar pesos
-        int ct = ind.documents.size();
+        double ct = ind.documents.size();
         for(Map.Entry<String,Tuple<Integer,Double> > e : ind.vocabulary.entrySet() ){
             Tuple<Integer,Double> termdoc = e.getValue();
             int termid = termdoc.item1;
