@@ -3,23 +3,15 @@ package ti;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Scanner;
-import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.*;
-import java.lang.Math;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
+
 /**
  * This class contains the logic to run the indexing process of the search engine.
  */
@@ -140,9 +132,9 @@ public class Indexer
         
         // P2
         // actualizar normas de documentos
-        for(Tuple<String,Double> t : ind.documents){
+        for(Tuple<String,Double> t : ind.documents)
             t.item2 = sqrt(t.item2);
-        }
+
         long endTime = System.currentTimeMillis();
         double totalTime = (endTime - startTime) / 1000d;
         System.err.println("done.");
@@ -161,9 +153,9 @@ public class Indexer
     protected void processDocument(File docFile, Index ind) throws IOException
     {
         // P2
-        //BufferedReader b = new BufferedReader(docFile.);
-        // leer documento desde disco
         
+        //BufferedReader b = new BufferedReader(docFile.);
+        // leer documento desde disco        
         String pfile;
         String file = new String();
         BufferedReader br = null;
@@ -171,15 +163,7 @@ public class Indexer
         while((pfile = br.readLine()) != null){
             file += pfile + " ";
         }
-        
-        
-        /*
-        String file = new String();
-        Scanner sc = new Scanner(new FileInputStream(docFile));
-        while(sc.hasNext()){
-            file += sc.next() + " ";
-        }*/
-        
+
         // procesarlo para obtener los términos
         // calcular pesos
         // actualizar estructuras del índice: vocabularyf documents e invertedIndex
@@ -200,6 +184,10 @@ public class Indexer
                }
                ArrayList<Tuple<Integer,Double> > docs = ind.invertedIndex.get(term.item1);
                int docsInTerm = docs.size();
+               
+               // Si el término no contiene el documento añadimos una tupla.
+               // Esto puede ocurrir tanto si el término es nuevo docsInTerm == 0
+               // Como si el término ya existe y contiene documentos pero no el actual.
                if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId )
                    docs.add(new Tuple<Integer,Double>(docId,0.0));
                Tuple<Integer,Double> tuple = docs.get(docs.size()-1); // Guardamos el ftd para calcular posteriormente tf e IDF.
@@ -208,9 +196,3 @@ public class Indexer
         }
     }
 }
-/*
-   public HashMap<String, Tuple<Integer, Double>> vocabulary; // [term] -> (termID, IDF)
-    public ArrayList<Tuple<String, Double>> documents; // [docID] -> (docName, norm)
-    public ArrayList<ArrayList<Tuple<Integer, Double>>> invertedIndex; // [termID] -> (docID, weight)+
-*/
-  
