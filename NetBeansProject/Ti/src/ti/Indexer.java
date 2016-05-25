@@ -172,6 +172,7 @@ public class Indexer
         ind.documents.add(new Tuple(docFile.getName(), 0.0));
         
         ArrayList<String> tokens = docProcessor.processText(file);
+        if(tokens == null)return;
         for (String token : tokens){
             Tuple<Integer,Double> term = ind.vocabulary.get(token);
             if(term == null){

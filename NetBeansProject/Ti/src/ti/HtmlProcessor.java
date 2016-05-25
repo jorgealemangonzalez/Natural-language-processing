@@ -11,8 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import org.jsoup.*;
 import org.jsoup.nodes.Document;
-
-/**
+import org.jsoup.nodes.Element;
+/*
  * A processor to extract terms from HTML documents.
  */
 public class HtmlProcessor implements DocumentProcessor
@@ -51,7 +51,9 @@ public class HtmlProcessor implements DocumentProcessor
 		// P3
 		// parsear documento
                 Document doc = Jsoup.parse(html);
-                String text = doc.body().text();
+                Element body = doc.body();
+                if(body == null)return null;
+                String text = body.text();
                 String title = doc.getElementsByTag("title").text();
                 //System.out.println("Title : "+title);
                 //System.out.println("Text:::::::::::"+text);
@@ -72,17 +74,27 @@ public class HtmlProcessor implements DocumentProcessor
 		// tokenizar, normalizar, stopword, stem, etc.
                 //parse
                 Tuple<String, String> parsed = this.parse(text);
+                if(parsed == null)return null;
                 //tokenize
                 Tuple<ArrayList<String> , ArrayList<String> > tokenized  = new Tuple<>(this.tokenize(parsed.item1),this.tokenize(parsed.item2));
                 //Normalize
+                ArrayList<String> termsNormalized = new ArrayList<>();
                 for(String s : tokenized.item1){
-                    terms.add(this.normalize(s));
+                    String norm = this.normalize(s);
+                    if(norm.length() != 0)
+                        termsNormalized.add(norm);
                 }
                 for(String s : tokenized.item2){
-                    terms.add(this.normalize(s));
+                    String norm = this.normalize(s);
+                    if(norm.length() != 0)
+                        termsNormalized.add(norm);
                 }
-                
-                //Stopwords
+                //Quit stopwords and stemmer
+                for(int i = 0 ; i < termsNormalized.size() ; ++i){
+                    if(!isStopWord(termsNormalized.get(i))){
+                        terms.add(stem(termsNormalized.get(i)));
+                    }
+                }
                 
 		return terms;
 	}
@@ -96,20 +108,28 @@ public class HtmlProcessor implements DocumentProcessor
 	protected ArrayList<String> tokenize(String text)
 	{
 		ArrayList<String> tokens = new ArrayList<>();
-                List<String> wordsSplited = Arrays.asList(text.split("\\s+&[ ]"));  ///COMO TIENE QUE FUNCIONAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                List<String> wordsSplited = Arrays.asList(text.split("\\s+"));
+                
+                //System.out.print(wordsSplited);
                 
                 for(String word : wordsSplited){
+                    //System.out.print(word + " ");
                     
-                    word = word.replaceAll(".","");
-                    word = word.replaceAll("[)]","");
-                    word = word.replaceAll("[(]","");
-                    if(word.length()==1 )continue;
+                    word = word.replace(".","");
+                    word = word.replace(",","");
+                    word = word.replace("(","");
+                    word = word.replace(")","");
+                    
+                    //System.out.println(word);
+                    
+                    if(word.length()==0 )continue;
+                    
                     tokens.add(word);
                     List<String> wordsWithoutSymbols = Arrays.asList(word.split("-"));
                     if(wordsWithoutSymbols.size() >  1  ){
                         
-                        tokens.add(word.replaceAll("-", " "));      //Add the word as the same with spaces
-                        tokens.add(word.replaceAll("-", ""));      //Add the word as the same without -
+                        tokens.add(word.replace("-", " "));      //Add the word as the same with spaces
+                        tokens.add(word.replace("-", ""));      //Add the word as the same without -
                         
                         for(String wordWithoutSymbols : wordsWithoutSymbols){
                             tokens.add(wordWithoutSymbols);
@@ -123,6 +143,7 @@ public class HtmlProcessor implements DocumentProcessor
                 for(int i = 0 ; i < tokSize-1 ;i++){
                     tokens.add( tokens.get(i) + " " + tokens.get(i+1) ) ;
                 }
+                //System.out.println(tokens);
 		// P3
 		return tokens;
 	}
@@ -136,11 +157,17 @@ public class HtmlProcessor implements DocumentProcessor
 	protected String normalize(String text)
 	{
 		String normalized = null;
-
-		// P3
+                //Transform to capital letters to lowercase
+                //Quit simbols that arent letters or numbers
+                if(text.matches(".*\\d+.*"))
+                    text = text.toLowerCase().replaceAll("[^a-z0-9 +=*:/@]", "");
+                else
+                    text = text.toLowerCase().replaceAll("[^a-z +#@]", "");
+                //Unable plural words
+                // P3
                 
-                   
-		return normalized;
+                //System.out.println(text);
+		return normalized = text;
 	}
 
 	/**
@@ -167,9 +194,17 @@ public class HtmlProcessor implements DocumentProcessor
 	protected String stem(String term)
 	{
 		String stem = null;
-
+                Stemmer stemer = new Stemmer();
+                char[] w = new char[term.length()];
+                term.getChars(0, term.length(), w, 0);
+                for(int i = 0 ; i < term.length() ; ++i){
+                    stemer.add(w[i]);
+                }
+                stemer.stem();
+                stem = stemer.toString();
+                
 		// P3
-
+                //System.out.println(stem);
 		return stem;
 	}
 }
