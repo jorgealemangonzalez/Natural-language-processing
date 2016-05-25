@@ -171,28 +171,26 @@ public class Indexer
         int docId = ind.documents.size();
         ind.documents.add(new Tuple(docFile.getName(), 0.0));
         
-        List<String> tokens = Arrays.asList(file.toLowerCase().replaceAll("[^a-z0-9']", " ").split("\\s+"));
+        ArrayList<String> tokens = docProcessor.processText(file);
         for (String token : tokens){
-           if (token.length() > 4){
-               Tuple<Integer,Double> term = ind.vocabulary.get(token);
-               if(term == null){
-                   int sz = ind.vocabulary.size();
-                   ind.invertedIndex.add(new ArrayList<>());
-                   term = new Tuple(sz, 0.0);
-                   ind.vocabulary.put(token, term);
-                   
-               }
-               ArrayList<Tuple<Integer,Double> > docs = ind.invertedIndex.get(term.item1);
-               int docsInTerm = docs.size();
-               
-               // Si el término no contiene el documento añadimos una tupla.
-               // Esto puede ocurrir tanto si el término es nuevo docsInTerm == 0
-               // Como si el término ya existe y contiene documentos pero no el actual.
-               if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId )
-                   docs.add(new Tuple<Integer,Double>(docId,0.0));
-               Tuple<Integer,Double> tuple = docs.get(docs.size()-1); // Guardamos el ftd para calcular posteriormente tf e IDF.
-               tuple.item2 += 1.0;
-           }
+            Tuple<Integer,Double> term = ind.vocabulary.get(token);
+            if(term == null){
+                int sz = ind.vocabulary.size();
+                ind.invertedIndex.add(new ArrayList<>());
+                term = new Tuple(sz, 0.0);
+                ind.vocabulary.put(token, term);
+
+            }
+            ArrayList<Tuple<Integer,Double> > docs = ind.invertedIndex.get(term.item1);
+            int docsInTerm = docs.size();
+
+            // Si el término no contiene el documento añadimos una tupla.
+            // Esto puede ocurrir tanto si el término es nuevo docsInTerm == 0
+            // Como si el término ya existe y contiene documentos pero no el actual.
+            if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId )
+                docs.add(new Tuple<Integer,Double>(docId,0.0));
+            Tuple<Integer,Double> tuple = docs.get(docs.size()-1); // Guardamos el ftd para calcular posteriormente tf e IDF.
+            tuple.item2 += 1.0;
         }
     }
 }

@@ -1,8 +1,16 @@
 package ti;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import org.jsoup.*;
+import org.jsoup.nodes.Document;
 
 /**
  * A processor to extract terms from HTML documents.
@@ -11,7 +19,7 @@ public class HtmlProcessor implements DocumentProcessor
 {
 
 	// P3
-
+        HashSet<String> stopWords;
 	/**
 	 * Creates a new HTML processor.
 	 *
@@ -22,6 +30,17 @@ public class HtmlProcessor implements DocumentProcessor
 	{
 		// P3
 		// cargar stopwords
+                stopWords = new HashSet<String>();
+                
+                if(pathToStopWords == null)return;
+                
+                String word ;
+                BufferedReader br = null;
+                br = new BufferedReader(new FileReader(pathToStopWords.getAbsolutePath()));
+                while((word = br.readLine()) != null){
+                    stopWords.add(word);
+                    //System.out.println(word);
+                }
 	}
 
 	/**
@@ -31,8 +50,12 @@ public class HtmlProcessor implements DocumentProcessor
 	{
 		// P3
 		// parsear documento
-
-		return null; // devolver título y body por separado
+                Document doc = Jsoup.parse(html);
+                String text = doc.body().text();
+                String title = doc.getElementsByTag("title").text();
+                //System.out.println("Title : "+title);
+                //System.out.println("Text:::::::::::"+text);
+		return new Tuple<String,String>(title,text); // devolver título y body por separado
 	}
 
 	/**
@@ -47,7 +70,20 @@ public class HtmlProcessor implements DocumentProcessor
 
 		// P3
 		// tokenizar, normalizar, stopword, stem, etc.
-
+                //parse
+                Tuple<String, String> parsed = this.parse(text);
+                //tokenize
+                Tuple<ArrayList<String> , ArrayList<String> > tokenized  = new Tuple<>(this.tokenize(parsed.item1),this.tokenize(parsed.item2));
+                //Normalize
+                for(String s : tokenized.item1){
+                    terms.add(this.normalize(s));
+                }
+                for(String s : tokenized.item2){
+                    terms.add(this.normalize(s));
+                }
+                
+                //Stopwords
+                
 		return terms;
 	}
 
@@ -60,9 +96,34 @@ public class HtmlProcessor implements DocumentProcessor
 	protected ArrayList<String> tokenize(String text)
 	{
 		ArrayList<String> tokens = new ArrayList<>();
-
+                List<String> wordsSplited = Arrays.asList(text.split("\\s+&[ ]"));  ///COMO TIENE QUE FUNCIONAR !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                
+                for(String word : wordsSplited){
+                    
+                    word = word.replaceAll(".","");
+                    word = word.replaceAll("[)]","");
+                    word = word.replaceAll("[(]","");
+                    if(word.length()==1 )continue;
+                    tokens.add(word);
+                    List<String> wordsWithoutSymbols = Arrays.asList(word.split("-"));
+                    if(wordsWithoutSymbols.size() >  1  ){
+                        
+                        tokens.add(word.replaceAll("-", " "));      //Add the word as the same with spaces
+                        tokens.add(word.replaceAll("-", ""));      //Add the word as the same without -
+                        
+                        for(String wordWithoutSymbols : wordsWithoutSymbols){
+                            tokens.add(wordWithoutSymbols);
+                        }
+                        
+                    }
+                    
+                    
+                }
+                int tokSize = tokens.size();
+                for(int i = 0 ; i < tokSize-1 ;i++){
+                    tokens.add( tokens.get(i) + " " + tokens.get(i+1) ) ;
+                }
 		// P3
-
 		return tokens;
 	}
 
@@ -77,7 +138,8 @@ public class HtmlProcessor implements DocumentProcessor
 		String normalized = null;
 
 		// P3
-
+                
+                   
 		return normalized;
 	}
 
@@ -89,10 +151,10 @@ public class HtmlProcessor implements DocumentProcessor
 	 */
 	protected boolean isStopWord(String term)
 	{
-		boolean isTopWord = false;
+		boolean isTopWord = stopWords.contains(term);
 
 		// P3
-
+                
 		return isTopWord;
 	}
 

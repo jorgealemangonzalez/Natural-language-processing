@@ -39,7 +39,7 @@ public class SearchEngine
         }
 
         // Build index
-        DocumentProcessor docProcessor = new SimpleProcessor(); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
         Indexer indexer = new Indexer(pathToIndex, pathToCollection, docProcessor);
         indexer.run();
     }
@@ -77,7 +77,7 @@ public class SearchEngine
         ind.printStatistics();
 
         // Instantiate retriever and run
-        DocumentProcessor docProcessor = new SimpleProcessor(); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
         RetrievalModel cosine = new Cosine(); // P4
         Batch batch = new Batch(pathToQueries, cosine, ind, docProcessor);
         batch.run();
@@ -111,7 +111,7 @@ public class SearchEngine
         ind.printStatistics();
 
         // Instantiate retriever and run
-        DocumentProcessor docProcessor = new SimpleProcessor(); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
         RetrievalModel cosine = new Cosine(); // P4
         Interactive inter = new Interactive(cosine, ind, docProcessor);
         inter.run();
