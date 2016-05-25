@@ -95,7 +95,12 @@ public class HtmlProcessor implements DocumentProcessor
                         terms.add(stem(termsNormalized.get(i)));
                     }
                 }
+                //add pairs
                 
+                Integer terSize =new Integer(terms.size()) ;
+                for(int i = 0 ; i < terSize-1 ;i++){
+                    terms.add( terms.get(i) + " " + terms.get(i+1) ) ;
+                }
 		return terms;
 	}
 
@@ -127,7 +132,7 @@ public class HtmlProcessor implements DocumentProcessor
                     tokens.add(word);
                     List<String> wordsWithoutSymbols = Arrays.asList(word.split("-"));
                     if(wordsWithoutSymbols.size() >  1  ){
-                        
+                        //total 30000 palabras mas al añadir esto
                         tokens.add(word.replace("-", " "));      //Add the word as the same with spaces
                         tokens.add(word.replace("-", ""));      //Add the word as the same without -
                         
@@ -139,10 +144,7 @@ public class HtmlProcessor implements DocumentProcessor
                     
                     
                 }
-                int tokSize = tokens.size();
-                for(int i = 0 ; i < tokSize-1 ;i++){
-                    tokens.add( tokens.get(i) + " " + tokens.get(i+1) ) ;
-                }
+                
                 //System.out.println(tokens);
 		// P3
 		return tokens;
