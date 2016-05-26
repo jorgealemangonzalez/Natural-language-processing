@@ -96,11 +96,12 @@ public class HtmlProcessor implements DocumentProcessor
                     }
                 }
                 //add pairs
-                
+                /*
                 Integer terSize =new Integer(terms.size()) ;
                 for(int i = 0 ; i < terSize-1 ;i++){
                     terms.add( terms.get(i) + " " + terms.get(i+1) ) ;
                 }
+                */
 		return terms;
 	}
 
@@ -113,7 +114,7 @@ public class HtmlProcessor implements DocumentProcessor
 	protected ArrayList<String> tokenize(String text)
 	{
 		ArrayList<String> tokens = new ArrayList<>();
-                List<String> wordsSplited = Arrays.asList(text.split("\\s+"));
+                List<String> wordsSplited = Arrays.asList(text.replace("[,)(]"," ").split("\\s+"));
                 
                 //System.out.print(wordsSplited);
                 
@@ -121,9 +122,6 @@ public class HtmlProcessor implements DocumentProcessor
                     //System.out.print(word + " ");
                     
                     word = word.replace(".","");
-                    word = word.replace(",","");
-                    word = word.replace("(","");
-                    word = word.replace(")","");
                     
                     //System.out.println(word);
                     

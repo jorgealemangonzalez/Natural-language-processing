@@ -169,7 +169,7 @@ public class Indexer
         // actualizar estructuras del índice: vocabularyf documents e invertedIndex
     
         int docId = ind.documents.size();
-        ind.documents.add(new Tuple(docFile.getName(), 0.0));
+        ind.documents.add(new Tuple(docFile.getName().replaceAll(".html", ""), 0.0));
         
         ArrayList<String> tokens = docProcessor.processText(file);
         if(tokens == null)return;
