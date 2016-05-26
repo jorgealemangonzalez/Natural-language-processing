@@ -93,7 +93,7 @@ public class HtmlProcessor implements DocumentProcessor
                 for(int i = 0 ; i < termsNormalized.size() ; ++i){
                     if(!isStopWord(termsNormalized.get(i))){
                         String stemmed = stem(termsNormalized.get(i));
-                        //System.out.println(stemmed);
+                        System.out.println(stemmed);
                         terms.add(stemmed);
                     }
                 }
@@ -123,8 +123,10 @@ public class HtmlProcessor implements DocumentProcessor
                 for(String word : wordsSplited){
                     //System.out.print(word + " ");
                     
-                    word = word.replace(".","");
-                    
+                    if(word.endsWith(".") && word.length() > 3){
+                        word = word.substring(0, word.length()-2);
+                    }
+                        
                     //System.out.println(word);
                     
                     if(word.length()==0 )continue;
@@ -162,9 +164,9 @@ public class HtmlProcessor implements DocumentProcessor
                 //Transform to capital letters to lowercase
                 //Quit simbols that arent letters or numbers
                 if(text.matches(".*\\d+.*"))
-                    text = text.toLowerCase().replaceAll("[^a-z0-9 +=*:/@]", "");
+                    text = text.toLowerCase().replaceAll("[^a-z0-9 .+=*:/@]", "");
                 else
-                    text = text.toLowerCase().replaceAll("[^a-z +#@]", "");
+                    text = text.toLowerCase().replaceAll("[^a-z .+#@]", "");
                 //Unable plural words
                 // P3
                 
