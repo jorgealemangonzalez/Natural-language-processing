@@ -92,7 +92,9 @@ public class HtmlProcessor implements DocumentProcessor
                 //Quit stopwords and stemmer
                 for(int i = 0 ; i < termsNormalized.size() ; ++i){
                     if(!isStopWord(termsNormalized.get(i))){
-                        terms.add(stem(termsNormalized.get(i)));
+                        String stemmed = stem(termsNormalized.get(i));
+                        //System.out.println(stemmed);
+                        terms.add(stemmed);
                     }
                 }
                 //add pairs

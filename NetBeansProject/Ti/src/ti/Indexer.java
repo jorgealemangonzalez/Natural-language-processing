@@ -166,7 +166,7 @@ public class Indexer
 
         // procesarlo para obtener los términos
         // calcular pesos
-        // actualizar estructuras del índice: vocabularyf documents e invertedIndex
+        // actualizar estructuras del índice: vocabulary documents e invertedIndex
     
         int docId = ind.documents.size();
         ind.documents.add(new Tuple(docFile.getName().replaceAll(".html", ""), 0.0));
