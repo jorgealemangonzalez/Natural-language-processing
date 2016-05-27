@@ -30,19 +30,17 @@ public class HtmlProcessor implements DocumentProcessor
      */
     public HtmlProcessor(File pathToStopWords) throws IOException
     {
-            // P3
-            // cargar stopwords
-            stopWords = new HashSet<String>();
+        // P3
+        // cargar stopwords
+        stopWords = new HashSet<String>();
 
-            if(pathToStopWords == null)return;
+        if(pathToStopWords == null)return;
 
-            String word ;
-            BufferedReader br = null;
-            br = new BufferedReader(new FileReader(pathToStopWords.getAbsolutePath()));
-            while((word = br.readLine()) != null){
-                stopWords.add(word);
-                //System.out.println(word);
-            }
+        String word ;
+        BufferedReader br = null;
+        br = new BufferedReader(new FileReader(pathToStopWords.getAbsolutePath()));
+        while((word = br.readLine()) != null)
+            stopWords.add(word);
     }
 
     /**
@@ -56,14 +54,8 @@ public class HtmlProcessor implements DocumentProcessor
         Element body = doc.body();
         if(body == null)return null;
 
-        String title = doc.getElementsByTag("title").text();
+        String title = doc.title();
         String text = body.text();
-
-        //System.out.println(text);
-
-        //Whitelist whitelist = Whitelist.basic();
-        //String text2 = Jsoup.clean(doc.html(), whitelist);
-        //System.out.println(text2);
 
         return new Tuple<String,String>(title,text); // devolver título y body por separado
     }
@@ -80,7 +72,6 @@ public class HtmlProcessor implements DocumentProcessor
 
         // P3
         // tokenizar, normalizar, stopword, stem, etc.
-
         //parse
         Tuple<String, String> parsed = this.parse(text);
         if(parsed == null)return null;
@@ -102,7 +93,7 @@ public class HtmlProcessor implements DocumentProcessor
         }
         //Stopwords y stemmer
         for(int i = 0 ; i < termsNormalized.size() ; ++i){
-            if(!isStopWord(termsNormalized.get(i))){
+            if(isStopWord(termsNormalized.get(i)) == false){
                 String stemmed = stem(termsNormalized.get(i));
                 terms.add(stemmed);
             }
@@ -114,8 +105,7 @@ public class HtmlProcessor implements DocumentProcessor
         for(int i = 0 ; i < terSize-1 ;i++){
             terms.add( terms.get(i) + " " + terms.get(i+1) ) ;
         }*/
-
-        //System.out.println(terms);
+        
         return terms;
     }
 
@@ -129,28 +119,21 @@ public class HtmlProcessor implements DocumentProcessor
     {
         // P3
         ArrayList<String> tokens = new ArrayList<>();
-
-        // Si es una página web https.
-        if(text.contains("https")){
-            text = text.replace("https://","");
-            //System.out.println(text);
-        }            
-        // Si es una página web http.
-        if(text.contains("http")){
+        
+        if(text.contains("http://")){
             text = text.replace("http://","");
-            //System.out.println(text);
-        }
-        // Si contiene www.
-        if(text.contains("www.")){
             text = text.replace("www.","");
             text = text.replace("."," ");
             text = text.replace("/"," ");
-            //System.out.println(text);
+           }
+        else if(text.contains("https://")){
+            text = text.replace("https://",""); 
+            text = text.replace("www.","");
+            text = text.replace("."," ");
+            text = text.replace("/"," ");
         }
-
-        // Remplazamos \ por espacios y obtenemos las palabras.
-        List<String> wordsSplited = Arrays.asList(text.replaceAll("[\\\\]", " ").split("\\s+"));
-
+       
+        List<String> wordsSplited = Arrays.asList(text.toLowerCase().replaceAll("[^a-z0-9'-]", " ").split("\\s+"));
         for(String word : wordsSplited){
             word = Normalizer.normalize(word, Normalizer.Form.NFD); // Normalizamos los carácteres y los pasamos todos a ASCII.
             word = word.replaceAll("[^\\p{ASCII}]", "");
@@ -160,7 +143,6 @@ public class HtmlProcessor implements DocumentProcessor
             List<String> wordsWithoutSymbols = Arrays.asList(word.split("-"));
             if(wordsWithoutSymbols.size() >  1  ){
                 //total 30000 palabras mas al añadir esto
-
                 tokens.add(word.replace("-", " "));      //Add the word as the same with spaces
                 tokens.add(word.replace("-", ""));      //Add the word as the same without -
 
@@ -182,7 +164,7 @@ public class HtmlProcessor implements DocumentProcessor
             String normalized = null;
             // Transformamos las palabras a minúsculas.
             if(text.matches(".*\\d+.*")) // Si es un número.
-                normalized = text.toLowerCase().replaceAll("[^a-z0-9.+-=*/:]", ""); // Reemplazamos todo lo que no sea.
+                normalized = text.toLowerCase().replaceAll("[^a-z0-9.+=*/-]", ""); // Reemplazamos todo lo que no sea.
             else
                 normalized = text.toLowerCase().replaceAll("[^a-z-]", "");
             return normalized;
@@ -221,7 +203,6 @@ public class HtmlProcessor implements DocumentProcessor
             stemer.stem();
             stem = stemer.toString();
 
-            //System.out.println(stem);
             return stem;
 	}
 }
