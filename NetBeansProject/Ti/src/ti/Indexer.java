@@ -116,9 +116,9 @@ public class Indexer
             int termid = termdoc.item1;
             int nd = ind.invertedIndex.get(termid).size();
             
-            termdoc.item2 = log(1+(nd/ct) );
+            termdoc.item2 = log(1+ (nd/ct));
             for(Tuple<Integer,Double> t : ind.invertedIndex.get(termid) ){
-                t.item2 = termdoc.item2 * (1+ log(t.item2) );
+                t.item2 = termdoc.item2 * (1+ log(t.item2));
                 ind.documents.get(t.item1).item2 += t.item2 * t.item2;
             }
         }                  
@@ -167,7 +167,6 @@ public class Indexer
         // procesarlo para obtener los términos
         // calcular pesos
         // actualizar estructuras del índice: vocabulary documents e invertedIndex
-    
         int docId = ind.documents.size();
         ind.documents.add(new Tuple(docFile.getName().replaceAll(".html", ""), 0.0));
         

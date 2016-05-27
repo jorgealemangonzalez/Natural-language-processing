@@ -150,6 +150,7 @@ public class HtmlProcessor implements DocumentProcessor
                     tokens.add(wordWithoutSymbols);   
             }
         }
+        
         return tokens;
     }
 
