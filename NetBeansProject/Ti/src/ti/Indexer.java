@@ -110,15 +110,15 @@ public class Indexer
 
         // P2
         // recorrer el índice para calcular IDF y actualizar pesos
-        double ct = ind.documents.size();
+        double nd = ind.documents.size();
         for(Map.Entry<String,Tuple<Integer,Double> > e : ind.vocabulary.entrySet() ){
             Tuple<Integer,Double> termdoc = e.getValue();
             int termid = termdoc.item1;
-            int nd = ind.invertedIndex.get(termid).size();
+            int ct = ind.invertedIndex.get(termid).size();
             
-            termdoc.item2 = log(1+ (nd/ct));
+            termdoc.item2 = log(1 + (nd/ct));
             for(Tuple<Integer,Double> t : ind.invertedIndex.get(termid) ){
-                t.item2 = termdoc.item2 * (1+ log(t.item2));
+                t.item2 = termdoc.item2 * (1 + log(t.item2));
                 ind.documents.get(t.item1).item2 += t.item2 * t.item2;
             }
         }                  

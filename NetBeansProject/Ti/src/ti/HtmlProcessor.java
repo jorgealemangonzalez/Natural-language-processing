@@ -7,13 +7,12 @@ import java.io.IOException;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import org.jsoup.*;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.safety.Whitelist;
+
 /*
  * A processor to extract terms from HTML documents.
  */
@@ -33,12 +32,10 @@ public class HtmlProcessor implements DocumentProcessor
         // P3
         // cargar stopwords
         stopWords = new HashSet<String>();
-
         if(pathToStopWords == null)return;
 
-        String word ;
-        BufferedReader br = null;
-        br = new BufferedReader(new FileReader(pathToStopWords.getAbsolutePath()));
+        String word;
+        BufferedReader br = new BufferedReader(new FileReader(pathToStopWords.getAbsolutePath()));
         while((word = br.readLine()) != null)
             stopWords.add(word);
     }
@@ -69,7 +66,6 @@ public class HtmlProcessor implements DocumentProcessor
     public ArrayList<String> processText(String text)
     {
         ArrayList<String> terms = new ArrayList<>();
-
         // P3
         // tokenizar, normalizar, stopword, stem, etc.
         //parse
