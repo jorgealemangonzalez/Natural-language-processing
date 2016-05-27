@@ -39,7 +39,8 @@ public class SearchEngine
         }
 
         // Build index
-        DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords);
+            
         Indexer indexer = new Indexer(pathToIndex, pathToCollection, docProcessor);
         indexer.run();
     }
@@ -78,6 +79,7 @@ public class SearchEngine
 
         // Instantiate retriever and run
         DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
+        
         RetrievalModel cosine = new Cosine(); // P4
         Batch batch = new Batch(pathToQueries, cosine, ind, docProcessor);
         batch.run();

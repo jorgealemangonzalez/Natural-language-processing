@@ -176,9 +176,9 @@ public class Indexer
         for (String token : tokens){
             Tuple<Integer,Double> term = ind.vocabulary.get(token);
             if(term == null){
-                int sz = ind.vocabulary.size();
-                ind.invertedIndex.add(new ArrayList<>());
-                term = new Tuple(sz, 0.0);
+                int sz = ind.vocabulary.size(); 
+                ind.invertedIndex.add(new ArrayList<>());  //[termID] -> (docID, weight)+
+                term = new Tuple(sz, 0.0); // Termino ID e IDF
                 ind.vocabulary.put(token, term);
 
             }
