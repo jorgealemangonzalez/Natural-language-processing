@@ -1,0 +1,106 @@
+ ----------- Sin usar bigramas.  -------------
+
+num_q                    	  all	    23
+num_ret                  	  all	 11500
+num_rel                  	  all	  1152
+num_rel_ret              	  all	  1069
+P@5                      	  all	0,5043
+P@10                     	  all	0,4696
+P@15                     	  all	0,4580
+P@20                     	  all	0,4457
+P@30                     	  all	0,4246
+P@50                     	  all	0,3991
+P@100                    	  all	0,3426
+P@200                    	  all	0,2091
+P@500                    	  all	0,0930
+R@5                      	  all	0,0696
+R@10                     	  all	0,1148
+R@15                     	  all	0,1576
+R@20                     	  all	0,1973
+R@30                     	  all	0,2678
+R@50                     	  all	0,4140
+R@100                    	  all	0,6899
+R@200                    	  all	0,8424
+R@500                    	  all	0,9429
+iP@0,00                  	  all	0,6919
+iP@0,10                  	  all	0,6244
+iP@0,20                  	  all	0,5320
+iP@0,30                  	  all	0,4956
+iP@0,40                  	  all	0,4658
+iP@0,50                  	  all	0,4312
+iP@0,60                  	  all	0,4142
+iP@0,70                  	  all	0,3715
+iP@0,80                  	  all	0,3513
+iP@0,90                  	  all	0,3013
+iP@1,00                  	  all	0,1422
+RP                       	  all	0,4100
+RR                       	  all	0,5898
+AP                       	  all	0,4192
+nDCG@5                   	  all	0,3970
+nDCG@10                  	  all	0,3918
+nDCG@15                  	  all	0,3970
+nDCG@20                  	  all	0,4038
+nDCG@30                  	  all	0,4049
+nDCG@50                  	  all	0,4295
+nDCG@100                 	  all	0,5616
+nDCG@200                 	  all	0,6388
+nDCG@500                 	  all	0,6829
+
+------------- Usando bigramas. ---------------
+
+num_q                    	  all	    23
+num_ret                  	  all	 11500
+num_rel                  	  all	  1152
+num_rel_ret              	  all	  1083
+P@5                      	  all	0,5652
+P@10                     	  all	0,5609
+P@15                     	  all	0,5188
+P@20                     	  all	0,4870
+P@30                     	  all	0,4667
+P@50                     	  all	0,4391
+P@100                    	  all	0,3613
+P@200                    	  all	0,2157
+P@500                    	  all	0,0942
+R@5                      	  all	0,0729
+R@10                     	  all	0,1368
+R@15                     	  all	0,1805
+R@20                     	  all	0,2199
+R@30                     	  all	0,3103
+R@50                     	  all	0,4563
+R@100                    	  all	0,7345
+R@200                    	  all	0,8715
+R@500                    	  all	0,9543
+iP@0,00                  	  all	0,7553
+iP@0,10                  	  all	0,7062
+iP@0,20                  	  all	0,6038
+iP@0,30                  	  all	0,5374
+iP@0,40                  	  all	0,5078
+iP@0,50                  	  all	0,4784
+iP@0,60                  	  all	0,4392
+iP@0,70                  	  all	0,4065
+iP@0,80                  	  all	0,3804
+iP@0,90                  	  all	0,3255
+iP@1,00                  	  all	0,1409
+RP                       	  all	0,4525
+RR                       	  all	0,6556
+AP                       	  all	0,4627
+nDCG@5                   	  all	0,4484
+nDCG@10                  	  all	0,4621
+nDCG@15                  	  all	0,4525
+nDCG@20                  	  all	0,4444
+nDCG@30                  	  all	0,4511
+nDCG@50                  	  all	0,4807
+nDCG@100                 	  all	0,6099
+nDCG@200                 	  all	0,6797
+nDCG@500                 	  all	0,7155
+
+
+Cosas a probar.
+
+- Implementar pesos mayores para títulos.
+- Parsear dando pesos mayores a texto en negrita. (Mirar etiqueta palabras en negrita).
+
+En ambos casos creo que es necesario cambiar lo retornado por las funciones del html processor.
+
+
+
