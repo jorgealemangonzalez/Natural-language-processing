@@ -7,8 +7,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Map;
 import java.io.FileReader;
-import java.util.Arrays;
-import java.util.List;
 import static java.lang.Math.log;
 import static java.lang.Math.sqrt;
 
@@ -121,9 +119,16 @@ public class Indexer
                 t.item2 = termdoc.item2 * (1 + log(t.item2));
                 ind.documents.get(t.item1).item2 += t.item2 * t.item2;
             }
-        }                  
-		// P4
-		// actualizar directIndex
+            
+        }
+        
+        // Inverted Index [termID] -> (docID, weight)+
+        // Direct Index [docID] -> (termID, weight)+
+        for(int i = 0; i < ind.invertedIndex.size(); i++){
+            for(Tuple<Integer, Double> doc : ind.invertedIndex.get(i))
+                ind.directIndex.get(doc.item1).add(new Tuple<>(i, doc.item2));
+        }
+        
         // Traverse all terms to compute IDF, direct postings, and norm summations
 
         System.err.println("done.");
@@ -169,11 +174,15 @@ public class Indexer
         // actualizar estructuras del índice: vocabulary documents e invertedIndex
         int docId = ind.documents.size();
         ind.documents.add(new Tuple(docFile.getName().replaceAll(".html", ""), 0.0));
-        
+        //P4
+        ind.directIndex.add(new ArrayList<>());
+        //--P4
         ArrayList<String> tokens = docProcessor.processText(file);
         if(tokens == null)return;
         for (String token : tokens){
+            
             Tuple<Integer,Double> term = ind.vocabulary.get(token);
+            
             if(term == null){
                 int sz = ind.vocabulary.size(); 
                 ind.invertedIndex.add(new ArrayList<>());  //[termID] -> (docID, weight)+
@@ -181,14 +190,19 @@ public class Indexer
                 ind.vocabulary.put(token, term);
 
             }
+            
             ArrayList<Tuple<Integer,Double> > docs = ind.invertedIndex.get(term.item1);
             int docsInTerm = docs.size();
 
             // Si el término no contiene el documento añadimos una tupla.
             // Esto puede ocurrir tanto si el término es nuevo docsInTerm == 0
             // Como si el término ya existe y contiene documentos pero no el actual.
-            if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId )
+            if(docsInTerm == 0 || docs.get(docsInTerm-1).item1 != docId ){
                 docs.add(new Tuple<Integer,Double>(docId,0.0));
+                //P4
+                //ind.directIndex.get(docId).add(new Tuple<Integer,Double>(term.item1 , term.item2));
+                //--P4
+            }
             Tuple<Integer,Double> tuple = docs.get(docs.size()-1); // Guardamos el ftd para calcular posteriormente tf e IDF.
             tuple.item2 += 1.0;
         }

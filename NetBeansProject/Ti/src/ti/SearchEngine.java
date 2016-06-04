@@ -79,8 +79,8 @@ public class SearchEngine
 
         // Instantiate retriever and run
         DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
-        
-        RetrievalModel cosine = new Cosine(); // P4
+                
+        RetrievalModel cosine = new CosineWithFeedback(5, 1, 0.75); // P4
         Batch batch = new Batch(pathToQueries, cosine, ind, docProcessor);
         batch.run();
     }
@@ -115,7 +115,7 @@ public class SearchEngine
         // Instantiate retriever and run
         DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
         
-        RetrievalModel cosine = new Cosine(); // P4
+        RetrievalModel cosine = new CosineWithFeedback(5, 1, 0.75); // P4
         Interactive inter = new Interactive(cosine, ind, docProcessor);
         inter.run();
     }

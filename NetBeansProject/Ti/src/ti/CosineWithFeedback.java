@@ -1,6 +1,9 @@
 package ti;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implements retrieval in a vector space with the cosine similarity function and a TFxIDF weight formulation,
@@ -11,6 +14,7 @@ public class CosineWithFeedback extends Cosine
 	protected int feedbackDepth;
 	protected double feedbackAlpha;
 	protected double feedbackBeta;
+        protected double feedbackGamma = 0.15;
 
 	/**
 	 * Creates a new retriver with the specified pseudorelevance feedback parameters.
@@ -33,13 +37,28 @@ public class CosineWithFeedback extends Cosine
 	@Override
 	public ArrayList<Tuple<Integer, Double>> runQuery(String queryText, Index index, DocumentProcessor docProcessor)
 	{
-		// P4
-		// calcular resultados iniciales
-		// actualizar vector consulta
-		// volver a ejecutar conulta
-
-		return null; // y devolver resultados
-	}
+            // P4
+            // calcular resultados iniciales
+            // Extraer los términos de la consulta.
+            ArrayList<String> queryTokens = docProcessor.processText(queryText); 
+            // Calcular el vector inicial.
+            ArrayList<Tuple<Integer, Double>> queryVector = super.computeVector(queryTokens, index);
+            
+            // calcular similitud de documentos
+            ArrayList<Tuple<Integer, Double>> similDocs = super.computeScores(queryVector, index);
+            
+            //Obtener los primeros k documentos para q0
+            ArrayList<Tuple<Integer, Double>> docs = new ArrayList<Tuple<Integer, Double>>(similDocs.subList(0, feedbackDepth));
+            
+            // actualizar vector consulta
+            queryVector = computeFeedbackVector(queryVector, docs, index);
+	    
+            // volver a ejecutar consulta
+            ArrayList<Tuple<Integer, Double>> docsWithFeedback = super.computeScores(queryVector, index);
+            
+            return new ArrayList<Tuple<Integer, Double>>(docsWithFeedback.subList(0, 
+                    (500 > docsWithFeedback.size() ? docsWithFeedback.size() : 500))); // y devolver resultados
+        }
 
 	/**
 	 * Computes the modified query vector for relevance feedback.
@@ -53,10 +72,37 @@ public class CosineWithFeedback extends Cosine
 	                                                                  ArrayList<Tuple<Integer, Double>> results,
 	                                                                  Index index)
 	{
-		ArrayList<Tuple<Integer, Double>> weights = new ArrayList<>();
-
-		// P4
-
-		return weights;
+            
+            HashMap<Integer, Double> newVocab = new HashMap<>();
+            for(Map.Entry<String, Tuple<Integer, Double>> e : index.vocabulary.entrySet()){
+                newVocab.put(e.getValue().item1, 0.0);
+            }
+            HashMap<Integer, Double> resultsDoc = new HashMap<>();
+            for(Tuple<Integer, Double> e : results){
+                resultsDoc.put(e.item1, e.item2);
+            }
+           
+            for(Tuple<Integer, Double> queryTerm : queryVector)
+                newVocab.put(queryTerm.item1, feedbackAlpha * queryTerm.item2); //primera parte de la ecuacion de rocchio         
+            
+            for(int i = 0; i < index.documents.size(); ++i){
+                if(resultsDoc.containsKey(i) == true){
+                    for(Tuple<Integer, Double> term : index.directIndex.get(i))
+                        newVocab.put(term.item1, newVocab.get(term.item1) + (feedbackBeta * 1/feedbackDepth * term.item2));
+                }
+                else{
+                    for(Tuple<Integer, Double> term : index.directIndex.get(i))
+                        newVocab.put(term.item1, newVocab.get(term.item1) - (feedbackGamma * 1/(index.documents.size() - feedbackDepth) * term.item2));
+                }
+            }
+            
+            // P4
+            ArrayList<Tuple<Integer, Double>> weights = new ArrayList<>();
+            for(Map.Entry<Integer, Double> e : newVocab.entrySet()){
+                if(e.getValue() > 0)
+                    weights.add(new Tuple<Integer, Double>(e.getKey(), e.getValue()));
+            }
+            
+            return weights;
 	}
 }

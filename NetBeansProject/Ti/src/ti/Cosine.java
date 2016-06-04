@@ -35,7 +35,7 @@ public class Cosine implements RetrievalModel
 	 * @return a list of {@link Tuple}s where the first item is the {@code docID} and the second one the similarity score.
 	 */
 	protected ArrayList<Tuple<Integer, Double>> computeScores(ArrayList<Tuple<Integer, Double>> queryVector, Index index)
-	{
+	{   
             ArrayList<Tuple<Integer, Double>> results = new ArrayList<>();
             HashMap<Integer,Double> res  = new HashMap<Integer,Double>();
                 
