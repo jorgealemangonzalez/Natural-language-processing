@@ -106,8 +106,8 @@ public class HtmlProcessor implements DocumentProcessor
         int terSize = terms.size();
         for(int i = 0 ; i < terSize-1 ;i++){
             terms.add( terms.get(i) + " " + terms.get(i+1) ) ;
-        }
-        */
+        }*/
+        
         
         return terms;
     }

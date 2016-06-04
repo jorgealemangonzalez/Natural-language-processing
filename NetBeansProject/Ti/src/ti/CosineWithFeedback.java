@@ -14,7 +14,6 @@ public class CosineWithFeedback extends Cosine
 	protected int feedbackDepth;
 	protected double feedbackAlpha;
 	protected double feedbackBeta;
-        protected double feedbackGamma = 0.15;
 
 	/**
 	 * Creates a new retriver with the specified pseudorelevance feedback parameters.
@@ -74,29 +73,23 @@ public class CosineWithFeedback extends Cosine
 	{
             
             HashMap<Integer, Double> newVocab = new HashMap<>();
-            for(Map.Entry<String, Tuple<Integer, Double>> e : index.vocabulary.entrySet()){
-                newVocab.put(e.getValue().item1, 0.0);
-            }
-            HashMap<Integer, Double> resultsDoc = new HashMap<>();
-            for(Tuple<Integer, Double> e : results){
-                resultsDoc.put(e.item1, e.item2);
-            }
            
-            for(Tuple<Integer, Double> queryTerm : queryVector)
-                newVocab.put(queryTerm.item1, feedbackAlpha * queryTerm.item2); //primera parte de la ecuacion de rocchio         
+            for(Tuple<Integer, Double> queryTerm : queryVector){
+                if(newVocab.containsKey(queryTerm.item1) == false)
+                    newVocab.put(queryTerm.item1, 0.0);
+                newVocab.put(queryTerm.item1, feedbackAlpha * queryTerm.item2); //primera parte de la ecuacion de rocchio 
+            }
             
-            for(int i = 0; i < index.documents.size(); ++i){
-                if(resultsDoc.containsKey(i) == true){
-                    for(Tuple<Integer, Double> term : index.directIndex.get(i))
-                        newVocab.put(term.item1, newVocab.get(term.item1) + (feedbackBeta * 1/feedbackDepth * term.item2));
-                }
-                else{
-                    for(Tuple<Integer, Double> term : index.directIndex.get(i))
-                        newVocab.put(term.item1, newVocab.get(term.item1) - (feedbackGamma * 1/(index.documents.size() - feedbackDepth) * term.item2));
+            for(Tuple<Integer, Double> doc : results){
+                for(Tuple<Integer, Double> term : index.directIndex.get(doc.item1)){
+                    if(newVocab.containsKey(term.item1) == false)
+                        newVocab.put(term.item1, 0.0);
+                    newVocab.put(term.item1, newVocab.get(term.item1) + (feedbackBeta * 1/feedbackDepth * term.item2));
                 }
             }
             
             // P4
+            // Creo que no es necesario.
             ArrayList<Tuple<Integer, Double>> weights = new ArrayList<>();
             for(Map.Entry<Integer, Double> e : newVocab.entrySet()){
                 if(e.getValue() > 0)
