@@ -53,12 +53,13 @@ public class SearchEngine
      */
     protected static void doBatch(String[] args) throws Exception
     {
-        if (args.length != 3) {
+        if (args.length < 3 || args.length > 4) {
             SearchEngine.printUsage();
             System.exit(1);
         }
         File pathToIndex = new File(args[1]);
         File pathToQueries = new File(args[2]);
+        File pathToStopWords = args.length == 4 ? new File(args[3]) : null;
 
         // Check console arguments
         if (!pathToIndex.exists() || pathToIndex.isFile()) {
@@ -78,9 +79,9 @@ public class SearchEngine
         ind.printStatistics();
 
         // Instantiate retriever and run
-        DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
                 
-        RetrievalModel cosine = new CosineWithFeedback(100, 1, 0.2, 0.2); // P4
+        RetrievalModel cosine = new CosineWithFeedback(100, 2.5, 0.15, 0.2); // P4
         Batch batch = new Batch(pathToQueries, cosine, ind, docProcessor);
         batch.run();
     }
@@ -93,11 +94,12 @@ public class SearchEngine
      */
     protected static void doInteractive(String[] args) throws Exception
     {
-        if (args.length != 2) {
+        if (args.length < 2 || args.length > 3) {
             SearchEngine.printUsage();
             System.exit(1);
         }
         File pathToIndex = new File(args[1]);
+        File pathToStopWords = args.length == 3 ? new File(args[2]) : null;
 
         // Check console arguments
         if (!pathToIndex.exists() || pathToIndex.isFile()) {
@@ -113,7 +115,7 @@ public class SearchEngine
         ind.printStatistics();
 
         // Instantiate retriever and run
-        DocumentProcessor docProcessor = new HtmlProcessor(null); // P3
+        DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
         
         RetrievalModel cosine = new CosineWithFeedback(10, 2.5, 0.75, 0.15); // P4
         Interactive inter = new Interactive(cosine, ind, docProcessor);
