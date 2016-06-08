@@ -1,3 +1,60 @@
+Mejor evaluación hasta el momento
+
+
+En general damos el doble de importancia a alpha al ser queries bastante específicas y correctas.
+
+ Subir beta por encima de 0.2 es contraproducente en general siempre.
+Con k's altos esta bien subir algo la c.
+
+100, 2.5, 0.15, 0.2
+
+num_q                    	  all	    23
+num_ret                  	  all	 11500
+num_rel                  	  all	  1152
+num_rel_ret              	  all	  1075
+P@5                      	  all	0,5304
+P@10                     	  all	0,5304
+P@15                     	  all	0,4957
+P@20                     	  all	0,4826
+P@30                     	  all	0,4551
+P@50                     	  all	0,4200
+P@100                    	  all	0,3509
+P@200                    	  all	0,2107
+P@500                    	  all	0,0935
+R@5                      	  all	0,0704
+R@10                     	  all	0,1277
+R@15                     	  all	0,1685
+R@20                     	  all	0,2097
+R@30                     	  all	0,2876
+R@50                     	  all	0,4260
+R@100                    	  all	0,7072
+R@200                    	  all	0,8443
+R@500                    	  all	0,9470
+iP@0,00                  	  all	0,7118
+iP@0,10                  	  all	0,6503
+iP@0,20                  	  all	0,6031
+iP@0,30                  	  all	0,5546
+iP@0,40                  	  all	0,5103
+iP@0,50                  	  all	0,4740
+iP@0,60                  	  all	0,4346
+iP@0,70                  	  all	0,3991
+iP@0,80                  	  all	0,3715
+iP@0,90                  	  all	0,3249
+iP@1,00                  	  all	0,1529
+RP                       	  all	0,4324
+RR                       	  all	0,6037
+AP                       	  all	0,4580
+nDCG@5                   	  all	0,4371
+nDCG@10                  	  all	0,4515
+nDCG@15                  	  all	0,4367
+nDCG@20                  	  all	0,4394
+nDCG@30                  	  all	0,4428
+nDCG@50                  	  all	0,4544
+nDCG@100                 	  all	0,5872
+nDCG@200                 	  all	0,6573
+nDCG@500                 	  all	0,7022
+
+
 --- Con Relevance Feedback y sin bigramas. ---
 
 num_q                    	  all	    23
