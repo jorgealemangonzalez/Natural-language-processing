@@ -1,10 +1,11 @@
 Mejor evaluación hasta el momento
 
-
 En general damos el doble de importancia a alpha al ser queries bastante específicas y correctas.
 
- Subir beta por encima de 0.2 es contraproducente en general siempre.
+Subir beta por encima de 0.2 es contraproducente en general siempre.
 Con k's altos esta bien subir algo la c.
+
+
 
 100, 2.5, 0.15, 0.2
 num_q                    	  all	    23

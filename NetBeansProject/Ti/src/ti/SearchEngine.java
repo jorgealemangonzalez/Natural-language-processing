@@ -81,7 +81,7 @@ public class SearchEngine
         // Instantiate retriever and run
         DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
                 
-        RetrievalModel cosine = new CosineWithFeedback(100, 2.5, 0.15, 0.2); // P4
+        RetrievalModel cosine = new CosineWithFeedback(25, 2, 0.25, 0.1); // P4
         Batch batch = new Batch(pathToQueries, cosine, ind, docProcessor);
         batch.run();
     }
@@ -117,7 +117,7 @@ public class SearchEngine
         // Instantiate retriever and run
         DocumentProcessor docProcessor = new HtmlProcessor(pathToStopWords); // P3
         
-        RetrievalModel cosine = new CosineWithFeedback(10, 2.5, 0.75, 0.15); // P4
+        RetrievalModel cosine = new CosineWithFeedback(25, 2, 0.25, 0.1); // P4
         Interactive inter = new Interactive(cosine, ind, docProcessor);
         inter.run();
     }
